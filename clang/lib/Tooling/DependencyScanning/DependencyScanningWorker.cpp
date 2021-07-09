@@ -108,7 +108,6 @@ public:
     // Create a compiler instance to handle the actual work.
     CompilerInstance Compiler(std::move(PCHContainerOps));
     Compiler.setInvocation(std::move(Invocation));
-    Compiler.setLookedUpModuleName(LookedUpModuleName);
 
     // Don't print 'X warnings and Y errors generated'.
     Compiler.getDiagnosticOpts().ShowCarets = false;
@@ -200,7 +199,11 @@ public:
     // the impact of strict context hashing.
     Compiler.getHeaderSearchOpts().ModulesStrictContextHash = true;
 
-    auto Action = std::make_unique<ReadPCHAndPreprocessAction>();
+    std::unique_ptr<ReadPCHAndPreprocessAction> Action =
+        LookedUpModuleName
+            ? std::make_unique<ReadPCHAndPreprocessByModNameAction>(
+                  LookedUpModuleName)
+            : std::make_unique<ReadPCHAndPreprocessAction>();
     const bool Result = Compiler.ExecuteAction(*Action);
     if (!DepFS)
       FileMgr->clearStatCache();
@@ -219,8 +222,8 @@ private:
 } // end anonymous namespace
 
 DependencyScanningWorker::DependencyScanningWorker(
-    DependencyScanningService &Service, const char *LookedUpModuleName)
-    : Format(Service.getFormat()), LookedUpModuleName(LookedUpModuleName) {
+    DependencyScanningService &Service)
+    : Format(Service.getFormat()) {
   DiagOpts = new DiagnosticOptions();
 
   PCHContainerOps = std::make_shared<PCHContainerOperations>();
