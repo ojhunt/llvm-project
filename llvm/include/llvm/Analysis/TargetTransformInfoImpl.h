@@ -1063,7 +1063,7 @@ public:
     InlineCompatibleCache;
   bool areInlineCompatible(const Function *Caller,
                                    const Function *Callee) const {
-#if 0
+#if 1
   std::pair<const Function *, const Function *> Key(Caller, Callee);
   auto [Iterator, Inserted] = InlineCompatibleCache.insert({Key, false});
   auto InsertionPoint = Iterator;
