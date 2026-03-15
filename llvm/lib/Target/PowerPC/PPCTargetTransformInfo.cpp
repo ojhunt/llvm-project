@@ -923,7 +923,7 @@ PPCTTIImpl::getIntrinsicInstrCost(const IntrinsicCostAttributes &ICA,
   return InstructionCost::getInvalid();
 }
 
-bool PPCTTIImpl::areInlineCompatible(const Function *Caller,
+bool PPCTTIImpl::areInlineCompatibleImpl(const Function *Caller,
                                      const Function *Callee) const {
   const TargetMachine &TM = getTLI()->getTargetMachine();
 

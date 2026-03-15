@@ -6576,7 +6576,7 @@ bool X86TTIImpl::isExpensiveToSpeculativelyExecute(const Instruction *I) const {
 
 bool X86TTIImpl::isFCmpOrdCheaperThanFCmpZero(Type *Ty) const { return false; }
 
-bool X86TTIImpl::areInlineCompatible(const Function *Caller,
+bool X86TTIImpl::areInlineCompatibleImpl(const Function *Caller,
                                      const Function *Callee) const {
   const TargetMachine &TM = getTLI()->getTargetMachine();
 

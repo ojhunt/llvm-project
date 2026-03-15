@@ -1059,8 +1059,30 @@ public:
       OpsOut.push_back(OpType);
   }
 
-  virtual bool areInlineCompatible(const Function *Caller,
+  mutable llvm::DenseMap<std::pair<const Function *, const Function *>, bool>
+    InlineCompatibleCache;
+  bool areInlineCompatible(const Function *Caller,
                                    const Function *Callee) const {
+#if 0
+  std::pair<const Function *, const Function *> Key(Caller, Callee);
+  auto [Iterator, Inserted] = InlineCompatibleCache.insert({Key, false});
+  auto InsertionPoint = Iterator;
+  if (!Inserted)
+    return Iterator->second;
+
+  auto RecordResult = [&](bool Result) {
+    InsertionPoint->second = Result;
+    return Result;
+  };
+#else
+  auto RecordResult = [](bool Result) {
+    return Result;
+  };
+#endif
+    return RecordResult(areInlineCompatibleImpl(Caller, Callee));
+  }
+  virtual bool areInlineCompatibleImpl(const Function *Caller,
+                                       const Function *Callee) const {
     return (Caller->getFnAttribute("target-cpu") ==
             Callee->getFnAttribute("target-cpu")) &&
            (Caller->getFnAttribute("target-features") ==

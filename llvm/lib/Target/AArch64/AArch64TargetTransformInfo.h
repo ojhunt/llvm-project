@@ -19,6 +19,7 @@
 #include "AArch64.h"
 #include "AArch64Subtarget.h"
 #include "AArch64TargetMachine.h"
+#include "llvm/ADT/DenseMap.h"
 #include "llvm/Analysis/TargetTransformInfo.h"
 #include "llvm/CodeGen/BasicTTIImpl.h"
 #include "llvm/IR/FMF.h"
@@ -27,6 +28,7 @@
 #include "llvm/Support/InstructionCost.h"
 #include <cstdint>
 #include <optional>
+#include <utility>
 
 namespace llvm {
 
@@ -90,7 +92,7 @@ public:
       : BaseT(TM, F.getDataLayout()), ST(TM->getSubtargetImpl(F)),
         TLI(ST->getTargetLowering()) {}
 
-  bool areInlineCompatible(const Function *Caller,
+  bool areInlineCompatibleImpl(const Function *Caller,
                            const Function *Callee) const override;
 
   bool areTypesABICompatible(const Function *Caller, const Function *Callee,

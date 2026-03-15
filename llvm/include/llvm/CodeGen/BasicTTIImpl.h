@@ -392,7 +392,7 @@ public:
         E, AddressSpace, Alignment, MachineMemOperand::MONone, Fast);
   }
 
-  bool areInlineCompatible(const Function *Caller,
+  bool areInlineCompatibleImpl(const Function *Caller,
                            const Function *Callee) const override {
     const TargetMachine &TM = getTLI()->getTargetMachine();
 

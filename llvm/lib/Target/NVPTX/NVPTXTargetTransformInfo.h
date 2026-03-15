@@ -99,7 +99,7 @@ public:
   // We don't want to prevent inlining because of target-cpu and -features
   // attributes that were added to newer versions of LLVM/Clang: There are
   // no incompatible functions in PTX, ptxas will throw errors in such cases.
-  bool areInlineCompatible(const Function *Caller,
+  bool areInlineCompatibleImpl(const Function *Caller,
                            const Function *Callee) const override {
     return true;
   }

@@ -1453,7 +1453,7 @@ bool GCNTTIImpl::isProfitableToSinkOperands(Instruction *I,
   return !Ops.empty();
 }
 
-bool GCNTTIImpl::areInlineCompatible(const Function *Caller,
+bool GCNTTIImpl::areInlineCompatibleImpl(const Function *Caller,
                                      const Function *Callee) const {
   const TargetMachine &TM = getTLI()->getTargetMachine();
   const GCNSubtarget *CallerST

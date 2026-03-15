@@ -92,7 +92,7 @@ static Value *simplifyNeonVld1(const IntrinsicInst &II, unsigned MemAlign,
                                    Align(Alignment));
 }
 
-bool ARMTTIImpl::areInlineCompatible(const Function *Caller,
+bool ARMTTIImpl::areInlineCompatibleImpl(const Function *Caller,
                                      const Function *Callee) const {
   const TargetMachine &TM = getTLI()->getTargetMachine();
   const FeatureBitset &CallerBits =

@@ -251,7 +251,7 @@ public:
   bool isProfitableToSinkOperands(Instruction *I,
                                   SmallVectorImpl<Use *> &Ops) const override;
 
-  bool areInlineCompatible(const Function *Caller,
+  bool areInlineCompatibleImpl(const Function *Caller,
                            const Function *Callee) const override;
 
   int getInliningLastCallToStaticBonus() const override;

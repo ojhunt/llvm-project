@@ -299,7 +299,7 @@ public:
   bool hasDivRemOp(Type *DataType, bool IsSigned) const override;
   bool isExpensiveToSpeculativelyExecute(const Instruction *I) const override;
   bool isFCmpOrdCheaperThanFCmpZero(Type *Ty) const override;
-  bool areInlineCompatible(const Function *Caller,
+  bool areInlineCompatibleImpl(const Function *Caller,
                            const Function *Callee) const override;
   bool areTypesABICompatible(const Function *Caller, const Function *Callee,
                              ArrayRef<Type *> Type) const override;

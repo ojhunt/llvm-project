@@ -280,8 +280,24 @@ const FeatureBitset AArch64TTIImpl::InlineInverseFeatures = {
     AArch64::FeatureExecuteOnly,
 };
 
-bool AArch64TTIImpl::areInlineCompatible(const Function *Caller,
+bool AArch64TTIImpl::areInlineCompatibleImpl(const Function *Caller,
                                          const Function *Callee) const {
+  #if 0
+  std::pair<const Function *, const Function *> Key(Caller, Callee);
+  auto [Iterator, Inserted] = InlineCompatibleCache.insert({Key, false});
+  auto InsertionPoint = Iterator;
+  if (!Inserted)
+    return Iterator->second;
+
+  auto RecordResult = [&](bool Result) {
+    InsertionPoint->second = Result;
+    return Result;
+  };
+#else
+  auto RecordResult = [](bool Result) {
+    return Result;
+  };
+#endif
   SMECallAttrs CallAttrs(*Caller, *Callee);
 
   // Never inline a function explicitly marked as being streaming,
@@ -299,13 +315,13 @@ bool AArch64TTIImpl::areInlineCompatible(const Function *Caller,
   }
 
   if (CallAttrs.callee().isNewZA() || CallAttrs.callee().isNewZT0())
-    return false;
+    return RecordResult(false);
 
   if (CallAttrs.requiresLazySave() || CallAttrs.requiresSMChange() ||
       CallAttrs.requiresPreservingZT0() ||
       CallAttrs.requiresPreservingAllZAState()) {
     if (hasPossibleIncompatibleOps(Callee, *getTLI()))
-      return false;
+      return RecordResult(false);
   }
 
   const TargetMachine &TM = getTLI()->getTargetMachine();
@@ -320,7 +336,7 @@ bool AArch64TTIImpl::areInlineCompatible(const Function *Caller,
   FeatureBitset EffectiveCallerBits = CallerBits ^ InlineInverseFeatures;
   FeatureBitset EffectiveCalleeBits = CalleeBits ^ InlineInverseFeatures;
 
-  return (EffectiveCallerBits & EffectiveCalleeBits) == EffectiveCalleeBits;
+  return RecordResult((EffectiveCallerBits & EffectiveCalleeBits) == EffectiveCalleeBits);
 }
 
 bool AArch64TTIImpl::areTypesABICompatible(const Function *Caller,
